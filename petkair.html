@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetKair — Enterprise AI for Veterinary Care</title>
+  <style>
+    :root {
+      --navy: #0A1628;
+      --navy-mid: #0F2040;
+      --navy-light: #162d52;
+      --teal: #00D4C8;
+      --teal-dim: #00b5aa;
+      --teal-glow: rgba(0,212,200,0.15);
+      --white: #ffffff;
+      --off-white: #f0f4f8;
+      --gray: #8a9ab5;
+      --card-bg: rgba(255,255,255,0.04);
+      --card-border: rgba(0,212,200,0.2);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 4rem;
+      background: rgba(10,22,40,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,212,200,0.1);
+    }
+    .nav-logo {
+      font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
+      color: var(--white);
+    }
+    .nav-logo span { color: var(--teal); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--gray); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-cta {
+      background: var(--teal); color: var(--navy);
+      padding: 0.5rem 1.4rem; border-radius: 6px;
+      font-weight: 700; font-size: 0.875rem; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--teal-dim); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,212,200,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--teal-glow); border: 1px solid var(--card-border);
+      color: var(--teal); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em;
+      padding: 0.35rem 1rem; border-radius: 100px; margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+    .hero-badge::before { content: '●'; font-size: 0.6rem; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900; letter-spacing: -2px; line-height: 1.0;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 .accent { color: var(--teal); }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--gray); max-width: 620px; margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--teal); color: var(--navy);
+      padding: 0.875rem 2rem; border-radius: 8px;
+      font-weight: 700; font-size: 1rem; text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--teal-dim); transform: translateY(-1px); }
+    .btn-ghost {
+      border: 1px solid var(--card-border); color: var(--white);
+      padding: 0.875rem 2rem; border-radius: 8px;
+      font-weight: 600; font-size: 1rem; text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--teal); background: var(--teal-glow); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--navy-mid);
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      padding: 2.5rem 4rem;
+    }
+    .stats-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2rem; text-align: center;
+    }
+    .stat-item .stat-num {
+      font-size: 2.5rem; font-weight: 900; color: var(--teal);
+      letter-spacing: -1px; line-height: 1;
+    }
+    .stat-item .stat-label {
+      color: var(--gray); font-size: 0.85rem; margin-top: 0.4rem; line-height: 1.4;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    section { padding: 6rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      color: var(--teal); font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.75rem);
+      font-weight: 800; letter-spacing: -0.5px; line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .section-desc {
+      color: var(--gray); font-size: 1.05rem; max-width: 580px; line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    /* ── PILLARS OVERVIEW ── */
+    .pillars-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;
+    }
+    .pillar-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px; padding: 2rem;
+      transition: border-color 0.25s, background 0.25s;
+      cursor: default;
+    }
+    .pillar-card:hover {
+      border-color: var(--teal);
+      background: rgba(0,212,200,0.05);
+    }
+    .pillar-icon {
+      width: 48px; height: 48px;
+      background: var(--teal-glow); border: 1px solid var(--card-border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1.25rem;
+    }
+    .pillar-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .pillar-card p { color: var(--gray); font-size: 0.925rem; line-height: 1.65; }
+
+    /* ── FEATURE SECTIONS ── */
+    .feature-section { background: var(--navy-mid); }
+    .feature-layout {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    .feature-layout.reversed { direction: rtl; }
+    .feature-layout.reversed > * { direction: ltr; }
+    .feature-visual {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 16px; padding: 2.5rem;
+      min-height: 340px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .feature-steps { list-style: none; }
+    .feature-steps li {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid rgba(0,212,200,0.08);
+    }
+    .feature-steps li:last-child { border-bottom: none; }
+    .step-num {
+      flex-shrink: 0; width: 28px; height: 28px;
+      background: var(--teal); color: var(--navy);
+      border-radius: 50%; font-size: 0.75rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+    .step-text strong { display: block; font-size: 0.9rem; margin-bottom: 0.15rem; }
+    .step-text span { color: var(--gray); font-size: 0.82rem; }
+
+    .feature-metrics {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;
+    }
+    .metric-pill {
+      background: var(--teal-glow); border: 1px solid var(--card-border);
+      border-radius: 8px; padding: 1rem;
+      text-align: center;
+    }
+    .metric-pill .m-num { font-size: 1.6rem; font-weight: 800; color: var(--teal); }
+    .metric-pill .m-label { font-size: 0.75rem; color: var(--gray); margin-top: 0.2rem; }
+
+    /* ── FEATURE CONTENT (text side) ── */
+    .feature-content .section-tag { margin-bottom: 0.5rem; }
+    .feature-content h2 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800; letter-spacing: -0.4px; line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .feature-content p {
+      color: var(--gray); font-size: 0.975rem; line-height: 1.75;
+      margin-bottom: 1.25rem;
+    }
+    .feature-bullets { list-style: none; }
+    .feature-bullets li {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      color: var(--gray); font-size: 0.9rem; margin-bottom: 0.6rem;
+    }
+    .feature-bullets li::before {
+      content: '→'; color: var(--teal); font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── WORKFLOW (Inbound Intake) ── */
+    .workflow-flow {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .wf-step {
+      display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0;
+      position: relative;
+    }
+    .wf-step:not(:last-child)::after {
+      content: '';
+      position: absolute; left: 14px; top: 38px;
+      width: 2px; height: calc(100% - 10px);
+      background: linear-gradient(to bottom, var(--teal), transparent);
+    }
+    .wf-dot {
+      flex-shrink: 0; width: 28px; height: 28px;
+      background: var(--navy); border: 2px solid var(--teal);
+      border-radius: 50%; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .wf-dot-inner { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; }
+    .wf-content strong { font-size: 0.875rem; color: var(--teal); display: block; }
+    .wf-content span { font-size: 0.82rem; color: var(--gray); }
+
+    /* ── RCM TABLE ── */
+    .rcm-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card-bg); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+    .rcm-table th {
+      background: rgba(0,212,200,0.12); color: var(--teal);
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 0.9rem 1.2rem; text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .rcm-table td {
+      padding: 0.85rem 1.2rem; font-size: 0.875rem;
+      border-bottom: 1px solid rgba(0,212,200,0.05); color: var(--gray);
+    }
+    .rcm-table tr:last-child td { border-bottom: none; }
+    .rcm-table td:first-child { color: var(--white); font-weight: 600; }
+    .badge-good {
+      display: inline-block; background: rgba(0,212,200,0.15);
+      color: var(--teal); border-radius: 4px; font-size: 0.75rem;
+      font-weight: 700; padding: 0.2rem 0.5rem;
+    }
+
+    /* ── POST-VISIT CARDS ── */
+    .pv-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .pv-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 10px; padding: 1.5rem;
+    }
+    .pv-card .pv-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .pv-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .pv-card p { color: var(--gray); font-size: 0.82rem; line-height: 1.55; }
+
+    /* ── PMS SECTION ── */
+    .pms-section { background: var(--navy); }
+    .pms-phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .phase-card {
+      border-radius: 12px; padding: 2rem;
+      position: relative; overflow: hidden;
+    }
+    .phase-card.phase-1 { background: rgba(0,212,200,0.08); border: 1px solid rgba(0,212,200,0.3); }
+    .phase-card.phase-2 { background: rgba(0,180,200,0.05); border: 1px solid rgba(0,180,200,0.2); }
+    .phase-card.phase-3 { background: rgba(0,140,180,0.04); border: 1px solid rgba(0,140,180,0.15); }
+    .phase-label {
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--teal); margin-bottom: 0.5rem;
+    }
+    .phase-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .phase-target { font-size: 0.8rem; color: var(--gray); margin-bottom: 0.5rem; }
+    .phase-target strong { color: var(--white); }
+    .phase-timeline {
+      display: inline-block; margin-top: 1rem;
+      background: rgba(0,212,200,0.1); border: 1px solid var(--card-border);
+      border-radius: 4px; padding: 0.25rem 0.6rem;
+      font-size: 0.75rem; font-weight: 700; color: var(--teal);
+    }
+
+    /* ── TESTIMONIAL / QUOTE ── */
+    .quote-section {
+      background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy) 100%);
+      text-align: center; padding: 5rem 2rem;
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+    }
+    .quote-text {
+      font-size: clamp(1.2rem, 2.5vw, 1.75rem);
+      font-style: italic; max-width: 800px; margin: 0 auto 1.5rem;
+      line-height: 1.5; color: var(--off-white);
+    }
+    .quote-text em { color: var(--teal); font-style: normal; font-weight: 700; }
+    .quote-source { color: var(--gray); font-size: 0.875rem; }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: var(--navy-mid); text-align: center;
+      padding: 6rem 2rem;
+      border-top: 1px solid var(--card-border);
+    }
+    .cta-section h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900;
+      letter-spacing: -1px; margin-bottom: 1rem; line-height: 1.1;
+    }
+    .cta-section h2 span { color: var(--teal); }
+    .cta-section p { color: var(--gray); font-size: 1.1rem; max-width: 520px; margin: 0 auto 2.5rem; }
+    .cta-offers {
+      display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .cta-offer {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 10px; padding: 1.2rem 1.8rem; text-align: left;
+      min-width: 200px;
+    }
+    .cta-offer .offer-title { font-size: 0.85rem; font-weight: 700; color: var(--teal); margin-bottom: 0.3rem; }
+    .cta-offer .offer-desc { font-size: 0.8rem; color: var(--gray); }
+    .cta-email { color: var(--gray); font-size: 0.9rem; margin-top: 1rem; }
+    .cta-email a { color: var(--teal); text-decoration: none; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy); border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-logo { font-size: 1.1rem; font-weight: 800; }
+    .footer-logo span { color: var(--teal); }
+    footer p { color: var(--gray); font-size: 0.8rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .pillars-grid { grid-template-columns: 1fr; }
+      .feature-layout, .feature-layout.reversed { grid-template-columns: 1fr; direction: ltr; gap: 2.5rem; }
+      .pms-phases { grid-template-columns: 1fr; }
+      .pv-cards { grid-template-columns: 1fr; }
+      .feature-metrics { grid-template-columns: 1fr 1fr; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stats-bar { padding: 2rem 1.5rem; }
+      section { padding: 4rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Pet<span>Kair</span></div>
+  <ul class="nav-links">
+    <li><a href="#intake">Intake</a></li>
+    <li><a href="#scheduling">Scheduling</a></li>
+    <li><a href="#rcm">Revenue Cycle</a></li>
+    <li><a href="#postvisit">Post-Visit</a></li>
+    <li><a href="#pms">Integrations</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Request Pilot</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Enterprise Agentic AI for Veterinary Care</div>
+  <h1>Let AI Handle<br>the Phones.<br><span class="accent">Your Team Handles<br>the Patients.</span></h1>
+  <p class="hero-sub">PetKair deploys a specialized digital workforce that answers every call, books every appointment, chases every invoice, and follows up after every visit — autonomously.</p>
+  <div class="hero-actions">
+    <a href="#cta" class="btn-primary">Join the Pilot</a>
+    <a href="#pillars" class="btn-ghost">See How It Works</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num">87%</div>
+      <div class="stat-label">of vet staff report medium-to-very-high burnout<br><small>2024 Merck/AVMA Survey</small></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">70 min</div>
+      <div class="stat-label">per day saved per doctor<br>using AI workflow automation</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">50%</div>
+      <div class="stat-label">reduction in routine inbound call volume</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">$58B</div>
+      <div class="stat-label">U.S. veterinary market growing at 7.8% CAGR</div>
+    </div>
+  </div>
+</div>
+
+<!-- PILLARS OVERVIEW -->
+<section id="pillars">
+  <div class="section-inner">
+    <div class="section-tag">The PetKair Digital Workforce</div>
+    <h2 class="section-title">Four Agents. One Platform.<br>Every Touchpoint Covered.</h2>
+    <p class="section-desc">Built on the same enterprise AI orchestration principles powering 400M+ healthcare interactions — purpose-engineered for veterinary workflows.</p>
+    <div class="pillars-grid">
+      <a href="#intake" class="pillar-card" style="text-decoration:none;color:inherit;">
+        <div class="pillar-icon">📞</div>
+        <h3>Inbound Intake</h3>
+        <p>Answers every call in under one second. Triages emergencies, resolves routine FAQs, and writes appointments directly into your Practice Management System — without ever involving your staff.</p>
+      </a>
+      <a href="#scheduling" class="pillar-card" style="text-decoration:none;color:inherit;">
+        <div class="pillar-icon">📅</div>
+        <h3>Appointment Orchestration</h3>
+        <p>Eliminates no-shows with intelligent confirmation flows. Auto-fills cancellations from the waitlist. Delivers perfectly timed pre-visit prep instructions. Your schedule runs itself.</p>
+      </a>
+      <a href="#rcm" class="pillar-card" style="text-decoration:none;color:inherit;">
+        <div class="pillar-icon">💰</div>
+        <h3>Revenue Cycle Management</h3>
+        <p>Handles billing questions, explains surgical estimates, and collects payments via secure voice and SMS — so your front desk staff can focus on the client in the room, not the invoice in the queue.</p>
+      </a>
+      <a href="#postvisit" class="pillar-card" style="text-decoration:none;color:inherit;">
+        <div class="pillar-icon">🩺</div>
+        <h3>Post-Visit Care Loop</h3>
+        <p>Proactively calls or texts pet parents 24–48 hours after procedures. Monitors recovery with condition-aware logic and escalates anomalous symptoms directly to your vet tech team.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- INBOUND INTAKE -->
+<section id="intake" class="feature-section">
+  <div class="section-inner">
+    <div class="feature-layout">
+      <div class="feature-content">
+        <div class="section-tag">Inbound Intake</div>
+        <h2>Zero Hold Times.<br>Zero Missed Calls.</h2>
+        <p>Your front desk team shouldn't spend the day answering "what are your hours?" and "can I book a vaccine appointment?" PetKair's Inbound Agent handles every call the moment it comes in — with veterinary-specific triage logic built in.</p>
+        <ul class="feature-bullets">
+          <li>Identifies the patient instantly via phone number cross-reference in the PMS</li>
+          <li>Actively listens for high-risk keywords — "bloated," "hit by car," "not breathing" — and pages a vet tech immediately</li>
+          <li>Calculates the correct appointment slot duration based on visit type</li>
+          <li>Writes the appointment directly into the PMS calendar — no staff required</li>
+          <li>Seamlessly transitions to SMS for digital intake forms and pre-arrival instructions</li>
+          <li>Client texts "HERE" at arrival — PMS status updates automatically, bypassing the front desk</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <div class="workflow-flow">
+          <div class="wf-step">
+            <div class="wf-dot"><div class="wf-dot-inner"></div></div>
+            <div class="wf-content">
+              <strong>Call Received</strong>
+              <span>AI answers in &lt;1 second. Patient identified via PMS lookup.</span>
+            </div>
+          </div>
+          <div class="wf-step">
+            <div class="wf-dot"><div class="wf-dot-inner"></div></div>
+            <div class="wf-content">
+              <strong>Emergency Triage</strong>
+              <span>High-risk keywords detected → vet tech paged immediately.</span>
+            </div>
+          </div>
+          <div class="wf-step">
+            <div class="wf-dot"><div class="wf-dot-inner"></div></div>
+            <div class="wf-content">
+              <strong>Scheduling</strong>
+              <span>Slot duration calculated, time negotiated, appointment written to PMS.</span>
+            </div>
+          </div>
+          <div class="wf-step">
+            <div class="wf-dot"><div class="wf-dot-inner"></div></div>
+            <div class="wf-content">
+              <strong>Pre-Arrival SMS</strong>
+              <span>Digital intake forms and fasting/care instructions sent automatically.</span>
+            </div>
+          </div>
+          <div class="wf-step">
+            <div class="wf-dot"><div class="wf-dot-inner"></div></div>
+            <div class="wf-content">
+              <strong>Arrival Check-In</strong>
+              <span>Client texts "HERE" → PMS updated → patient goes straight to exam room.</span>
+            </div>
+          </div>
+        </div>
+        <div class="feature-metrics" style="margin-top:1.5rem;">
+          <div class="metric-pill">
+            <div class="m-num">35–50%</div>
+            <div class="m-label">reduction in inbound call volume</div>
+          </div>
+          <div class="metric-pill">
+            <div class="m-num">24/7</div>
+            <div class="m-label">after-hours triage and booking</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPOINTMENT ORCHESTRATION -->
+<section id="scheduling">
+  <div class="section-inner">
+    <div class="feature-layout reversed">
+      <div class="feature-content">
+        <div class="section-tag">Appointment Orchestration</div>
+        <h2>A Schedule That<br>Manages Itself.</h2>
+        <p>Every no-show costs your practice revenue and wastes a slot another pet could have filled. PetKair's Appointment Orchestration agent maximizes schedule utilization without a single staff action.</p>
+        <ul class="feature-bullets">
+          <li>Sends intelligent confirmation flows — voice, SMS, or email — days before the appointment</li>
+          <li>Detects cancellations instantly and automatically works the waitlist to fill the slot</li>
+          <li>Delivers perfectly timed pre-visit prep instructions (fasting, medications, what to bring)</li>
+          <li>Handles appointment reminders for chronic care patients — diabetic glucose checks, senior wellness exams, annual vaccines</li>
+          <li>Integrates directly with Digitail, IDEXX Neo, Covetrus Pulse and other PMS platforms</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <ol class="feature-steps" style="list-style:none;">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-text">
+              <strong>72-Hour Reminder</strong>
+              <span>Automated voice or SMS reminder sent. Client confirms, reschedules, or cancels.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-text">
+              <strong>Cancellation Detected</strong>
+              <span>AI immediately scans the waitlist for the best-fit patient to fill the slot.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-text">
+              <strong>Waitlist Outreach</strong>
+              <span>Top waitlist client is contacted and offered the slot. Booking confirmed in seconds.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-text">
+              <strong>Pre-Visit Prep</strong>
+              <span>Condition-specific instructions delivered — fasting windows, medication pauses, what to bring.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">5</div>
+            <div class="step-text">
+              <strong>Day-Of Confirmation</strong>
+              <span>Morning-of nudge sent. Client replies with ETA. Staff sees live status in dashboard.</span>
+            </div>
+          </li>
+        </ol>
+        <div class="feature-metrics">
+          <div class="metric-pill">
+            <div class="m-num">30–50%</div>
+            <div class="m-label">decrease in no-show rate</div>
+          </div>
+          <div class="metric-pill">
+            <div class="m-num">100%</div>
+            <div class="m-label">waitlist auto-fill on cancellations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RCM -->
+<section id="rcm" class="feature-section">
+  <div class="section-inner">
+    <div class="feature-layout">
+      <div class="feature-content">
+        <div class="section-tag">Revenue Cycle Management</div>
+        <h2>Collect More.<br>Faster. Without Awkward Conversations.</h2>
+        <p>Billing conversations are stressful for staff and pet owners alike. PetKair's RCM Agent handles every financial interaction with compassion, accuracy, and zero friction — from estimate explanation to payment collection.</p>
+        <ul class="feature-bullets">
+          <li>Answers billing questions instantly — no hold times, no callbacks</li>
+          <li>Explains complex surgical estimates in plain language via voice or SMS</li>
+          <li>Processes secure payments through HIPAA-compliant voice and SMS payment flows</li>
+          <li>Sends automated balance reminders with one-tap payment links</li>
+          <li>Escalates disputes and complex financial cases to a human immediately</li>
+          <li>Tracks outstanding balances and flags high-risk accounts for staff review</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <table class="rcm-table">
+          <thead>
+            <tr>
+              <th>Workflow</th>
+              <th>Without PetKair</th>
+              <th>With PetKair</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Estimate Questions</td>
+              <td style="color:#8a9ab5;">Staff callback queue</td>
+              <td><span class="badge-good">Instant AI response</span></td>
+            </tr>
+            <tr>
+              <td>Payment Collection</td>
+              <td style="color:#8a9ab5;">Manual follow-up calls</td>
+              <td><span class="badge-good">Automated SMS/voice</span></td>
+            </tr>
+            <tr>
+              <td>Balance Reminders</td>
+              <td style="color:#8a9ab5;">Monthly paper statements</td>
+              <td><span class="badge-good">Real-time nudges</span></td>
+            </tr>
+            <tr>
+              <td>Dispute Escalation</td>
+              <td style="color:#8a9ab5;">Front desk handles it</td>
+              <td><span class="badge-good">AI routes to manager</span></td>
+            </tr>
+            <tr>
+              <td>After-Hours Billing</td>
+              <td style="color:#8a9ab5;">Voicemail / wait until open</td>
+              <td><span class="badge-good">24/7 self-service</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POST-VISIT -->
+<section id="postvisit">
+  <div class="section-inner">
+    <div class="feature-layout reversed">
+      <div class="feature-content">
+        <div class="section-tag">Post-Visit Care Loop</div>
+        <h2>The Follow-Up That<br>Never Gets Forgotten.</h2>
+        <p>Post-operative check-ins and chronic care follow-ups are clinically essential — but they're the first thing to fall off the list when the phones are ringing. PetKair's Post-Visit Agent does it automatically, every time.</p>
+        <ul class="feature-bullets">
+          <li>Proactively calls or texts pet parents 24–48 hours post-procedure</li>
+          <li>Uses condition-aware logic — different scripts for post-spay vs. diabetic management vs. senior wellness</li>
+          <li>Detects anomalous responses ("the incision looks red and swollen") and escalates to vet tech immediately</li>
+          <li>Logs all follow-up interactions and patient responses back into the PMS SOAP note</li>
+          <li>Drives treatment adherence for chronic conditions — medication refill reminders, recheck scheduling</li>
+          <li>Builds client loyalty through consistent, compassionate outreach that feels personal</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <div class="pv-cards">
+          <div class="pv-card">
+            <div class="pv-icon">🐕</div>
+            <h4>Post-Surgical</h4>
+            <p>Incision monitoring, pain assessment, activity restrictions. Auto-escalates redness, swelling, or behavioral changes.</p>
+          </div>
+          <div class="pv-card">
+            <div class="pv-icon">💉</div>
+            <h4>Chronic Care</h4>
+            <p>Diabetic glucose tracking, thyroid med adherence, recheck scheduling. Keeps long-term patients engaged between visits.</p>
+          </div>
+          <div class="pv-card">
+            <div class="pv-icon">🐾</div>
+            <h4>Wellness & Vaccines</h4>
+            <p>Annual and semi-annual vaccine reminders. Heartworm, flea, and tick prevention refill nudges at the right time.</p>
+          </div>
+        </div>
+        <div class="feature-metrics" style="margin-top:1.25rem;">
+          <div class="metric-pill">
+            <div class="m-num">100%</div>
+            <div class="m-label">follow-up completion rate</div>
+          </div>
+          <div class="metric-pill">
+            <div class="m-num">&lt;60s</div>
+            <div class="m-label">escalation to vet tech on anomaly</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section">
+  <p class="quote-text">"Veterinarians saved over <em>70 minutes per day per doctor</em> using AI workflow automation — time returned to patient care, not paperwork."</p>
+  <p class="quote-source">Hefner Road Animal Hospital — AI Workflow Case Study</p>
+</div>
+
+<!-- PMS INTEGRATION -->
+<section id="pms" class="pms-section">
+  <div class="section-inner">
+    <div class="section-tag">Integrations</div>
+    <h2 class="section-title">We Meet You Where You Are</h2>
+    <p class="section-desc">PetKair integrates with the practice management systems your clinic already runs — from modern cloud-native platforms to legacy on-premise systems.</p>
+    <div class="pms-phases">
+      <div class="phase-card phase-1">
+        <div class="phase-label">Phase 1 — Available Now</div>
+        <h3>Cloud-Native Platforms</h3>
+        <p class="phase-target"><strong>Digitail, IDEXX Neo, Covetrus Pulse</strong></p>
+        <p style="color:var(--gray);font-size:0.875rem;line-height:1.6;">Direct REST API integration with OAuth 2.0. Two-way sync for schedules, demographics, and SOAP notes. Go live in weeks, not months. Zero on-premise hardware required.</p>
+        <span class="phase-timeline">Launch-ready</span>
+      </div>
+      <div class="phase-card phase-2">
+        <div class="phase-label">Phase 2 — 6–12 months</div>
+        <h3>Legacy On-Premise</h3>
+        <p class="phase-target"><strong>Covetrus AviMark</strong></p>
+        <p style="color:var(--gray);font-size:0.875rem;line-height:1.6;">Middleware bridge via CRMBridge and VetData partners tunnels into local clinic servers. Read-heavy strategy initially; write-light to prevent database locking. Reaches high-volume general practices.</p>
+        <span class="phase-timeline">6–12 months</span>
+      </div>
+      <div class="phase-card phase-3">
+        <div class="phase-label">Phase 3 — Enterprise</div>
+        <h3>Walled Garden</h3>
+        <p class="phase-target"><strong>IDEXX Cornerstone, ezyVet</strong></p>
+        <p style="color:var(--gray);font-size:0.875rem;line-height:1.6;">Direct partner network integration with IDEXX. Full bi-directional orchestration for large specialty hospitals and corporate networks after passing rigorous security audit.</p>
+        <span class="phase-timeline">12–24 months</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta" class="cta-section">
+  <div class="section-inner" style="text-align:center;">
+    <div class="section-tag" style="display:inline-block;">Pilot Program</div>
+    <h2>Join the<br><span>Founding Cohort.</span></h2>
+    <p>We're selecting 5 forward-thinking practices to co-design PetKair with us. No setup fees. Measurable results in 30 days.</p>
+    <div class="cta-offers">
+      <div class="cta-offer">
+        <div class="offer-title">Free Integration</div>
+        <div class="offer-desc">No setup fees for pilot partners. We connect to your existing PMS.</div>
+      </div>
+      <div class="cta-offer">
+        <div class="offer-title">30-Day Proof</div>
+        <div class="offer-desc">Measurable KPIs in your first month: call volume, no-shows, staff hours reclaimed.</div>
+      </div>
+      <div class="cta-offer">
+        <div class="offer-title">Co-Design Access</div>
+        <div class="offer-desc">Pilot practices shape the roadmap and receive preferred pricing permanently.</div>
+      </div>
+    </div>
+    <a href="mailto:hello@petkair.com" class="btn-primary" style="font-size:1.1rem;padding:1rem 2.5rem;">Request a Pilot Spot</a>
+    <p class="cta-email" style="margin-top:1.25rem;">Or email us directly at <a href="mailto:hello@petkair.com">hello@petkair.com</a></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Pet<span>Kair</span></div>
+  <p>© 2026 PetKair. Transforming Veterinary Care Through Enterprise Agentic AI.</p>
+  <p style="color:var(--gray);font-size:0.8rem;">petkair.com</p>
+</footer>
+
+</body>
+</html>
